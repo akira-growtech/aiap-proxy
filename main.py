@@ -1,15 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()  # .envファイルの読み込み
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # CORS対応
+CORS(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -20,7 +20,7 @@ def chat():
         return jsonify({"reply": "メッセージが空です"}), 400
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたは明良さん専用のAIアシスタントです。"},
@@ -29,12 +29,11 @@ def chat():
         )
         reply_text = response.choices[0].message.content.strip()
         return jsonify({"reply": reply_text})
-
     except Exception as e:
-        # ✅ エラー内容をログに出す
         print("❌ エラー発生:", str(e))
         return jsonify({"reply": f"内部エラー: {str(e)}"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
