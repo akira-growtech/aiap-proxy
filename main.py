@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()  # .envファイルの読み込み
 
 app = Flask(__name__)
-CORS(app)  # CORS対応（必要に応じて調整）
+CORS(app)  # CORS対応
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -31,7 +31,9 @@ def chat():
         return jsonify({"reply": reply_text})
 
     except Exception as e:
-        return jsonify({"reply": "エラーが発生しました。"}), 500
+        # ✅ エラー内容をログに出す
+        print("❌ エラー発生:", str(e))
+        return jsonify({"reply": f"内部エラー: {str(e)}"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
