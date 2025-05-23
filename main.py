@@ -7,7 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+
+# 🔽 GitHub Pagesからのアクセスを許可（CORS対応）
+CORS(app, origins=["https://akira-growtech.github.io"])
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
