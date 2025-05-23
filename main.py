@@ -8,18 +8,16 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# ✅ CORS設定を強化
 CORS(app,
      resources={r"/chat": {"origins": "https://akira-growtech.github.io"}},
      supports_credentials=True,
-     allow_headers=["Content-Type", "Authorization"],
+     allow_headers=["Content-Type"],
      methods=["GET", "POST", "OPTIONS"])
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/chat", methods=["POST", "OPTIONS"])
 def chat():
-    # ✅ OPTIONS に対応
     if request.method == "OPTIONS":
         return '', 204
 
@@ -46,4 +44,3 @@ def chat():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
