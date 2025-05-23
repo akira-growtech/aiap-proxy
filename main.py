@@ -8,13 +8,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# 🔽 GitHub Pagesからのアクセスを許可（CORS対応）
-CORS(app, supports_credentials=True, origins=["https://akira-growtech.github.io"])
+# ✅ すべてのHTTPメソッドに対応 & GitHub Pagesからのリクエスト許可
+CORS(app, origins=["https://akira-growtech.github.io"], supports_credentials=True)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@app.route("/chat", methods=["POST"])
+@app.route("/chat", methods=["POST", "OPTIONS"])
 def chat():
+    if request.method == "OPTIONS":
+        # CORSプリフライトリクエストへの応答
+        return jsonify({"message": "CORSプリフライトOK"}), 200
+
     data = request.json
     user_message = data.get("message", "")
 
